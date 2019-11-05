@@ -1,5 +1,9 @@
 {% extends 'blog/base.html' %} <!-- 必須放在最上方 -->
 
+{% block title %}
+	<title>Message</title>
+{% endblock %}
+
 {% block content %}
     <div class="post">
         {% if post.published_date %}
@@ -18,22 +22,44 @@
         <p>{{ post.text|linebreaksbr }}</p>
     </div>
 	<hr>
-	<a class="btn btn-default" href="{% url 'add_comment_to_post' pk=post.pk %}">Add comment</a>
-	{% for comment in post.comments.all %}
-		{% if user.is_authenticated or comment.approved_comment %}
-		<div class="comment">
-			<div class="date">
-				{{ comment.created_date }}
-				{% if not comment.approved_comment %}
-					<a class="btn btn-default" href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
-					<a class="btn btn-default" href="{% url 'comment_approve' pk=comment.pk %}"><span class="glyphicon glyphicon-ok"></span></a>
-				{% endif %}
+	<!-- <button class="btn add" data-toggle="collapse" data-target="#msgform"><span class="glyphicon glyphicon-plus mr-1"></span>Add Comment</button >-->	
+	<a class="btn add" href="{% url 'add_comment_to_post' pk=post.pk %}"><span class="glyphicon glyphicon-plus mr-1"></span>Add comment</a> 
+	<div id="msgform" class="panel-collapse collapse msgform">
+		<h1>New comment</h1>
+		<form method="POST" class="post-form">
+			{% csrf_token %}
+			<div class="form-group">
+				<label><span class="glyphicon glyphicon-user mr-1"></span>Author</label>
+				<input type="text" class="form-control" name="author" placeholder="your name"/>
 			</div>
-			<strong>{{ comment.author }}</strong>
-			<p>{{ comment.text|linebreaks }}</p>
-		</div>
-		{% endif %}
-	{% empty %}
-		<p>No comments here yet :(</p>
-	{% endfor %}
+			<div class="form-group">
+				<label><span class="glyphicon glyphicon-comment mr-1"></span>Messages</label>
+				<textarea class="form-control" name="msg" rows="5" placeholder="messages" style="resize: none;"></textarea>
+			</div>
+			<div class="form-group text-center">
+				<button type="submit" class="btn btnQuery">Send</button>
+			</div>			
+    </form>
+	</div>
+	<div style="border-top: 1px solid #bdbdbd;">
+		{% for comment in post.comments.all %}
+			{% if user.is_authenticated or comment.approved_comment %}
+			<div class="media" style="border-top: 1px solid #bdbdbd;">
+				<div class="media-left">
+					<span></span>{{ comment.created_date }}
+					{% if not comment.approved_comment %}
+						<a class="btn-link mr-1" href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove text-danger"></span></a>
+						<a class="btn-link" href="{% url 'comment_approve' pk=comment.pk %}"><span class="glyphicon glyphicon-ok text-info"></span></a>
+					{% endif %}
+				</div>
+				<div class="media-body">
+					<strong>{{ comment.author }}</strong>
+					<p>{{ comment.text|linebreaks }}</p>
+				</div>			
+			</div>
+			{% endif %}
+		{% empty %}
+			<p>No comments here yet :(</p>
+		{% endfor %}
+	</div>
 {% endblock %}

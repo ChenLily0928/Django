@@ -1,13 +1,23 @@
 {% extends 'blog/base.html' %} <!-- 必須放在最上方 -->
 
+{% block title %}
+	<title>Django Girls Blog</title>
+{% endblock %}
+
 {% block content %}
-	{% for post in posts %} 
-		<div class="post">
-			<p>published: {{ post.published_date }}</p>
-			<h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
-			<p>{{ post.text|linebreaksbr }}</p>
-			<a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.approved_comments.count }}</a>
-		</div>     
-	{% endfor %}
-{% endblock %}		
+	{% for post in posts %}	
+		<div class="post well well-lg row">
+			<div class="col-xs-12 col-sm-3">
+				<div class="user"></div>
+			</div>	
+			<div class="col-xs-12 col-sm-9">	
+				<h3><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h3>
+				<p>published: {{ post.published_date }}</p>
+				<p class="msgbox">{{ post.text|linebreaksbr }}</p>
+				<p class="more"><a href="{% url 'post_detail' pk=post.pk %}">﹝Read more...﹞</a></p>
+				<a class="btn btn-primary" href="{% url 'post_detail' pk=post.pk %}">Comments: <span class="badge">{{ post.approved_comments.count }} </span></a>
+			</div>			
+		</div>
+	{% endfor %}	
+{% endblock %}
 			
